@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use OsiSet\ShopifyLaravel\Facades\Shopify;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +17,32 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/install-app', function() {
+    return redirect()->route('shopify.api.install');
+});
+
+Route::get('/get-products', function() {
+
+    try {
+        $products = Shopify::products()->get();
+        return response()->json($products);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 500);
+    }
+});
+
+
+
+
+// routes/web.php (TEMPORAL para limpiar caché)
+Route::get('/clear-all-cache', function() {
+    Artisan::call('route:clear');
+    Artisan::call('config:clear');
+    Artisan::call('cache:clear');
+    Artisan::call('view:clear');
+    Artisan::call('optimize:clear');
+    return "Todas las cachés limpiadas!";
+});
+
+//test
